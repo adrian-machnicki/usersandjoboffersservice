@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -20,8 +19,6 @@ public class UserDto {
 
     @NotBlank
     private String password;
-
-    @NotNull
     private ZonedDateTime creationDate;
 
     public static UserDto of(Long id, String login, String password, ZonedDateTime creationDate) {
@@ -35,6 +32,10 @@ public class UserDto {
 
     public static UserDto of(String login, String password, ZonedDateTime creationDate) {
         return of(null, login, password, creationDate);
+    }
+
+    public static UserDto of(String login, String password) {
+        return of(null, login, password, null);
     }
 
 }

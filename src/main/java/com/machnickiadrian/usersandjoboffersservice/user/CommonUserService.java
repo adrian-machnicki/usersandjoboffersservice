@@ -7,6 +7,10 @@ import com.machnickiadrian.usersandjoboffersservice.user.mapper.UserToUserDtoCon
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 @Service
 public class CommonUserService implements UserService {
 
@@ -19,6 +23,13 @@ public class CommonUserService implements UserService {
         this.userRepository = userRepository;
         this.userToUserDtoConverter = userToUserDtoConverter;
         this.userDtoToUserConverter = userDtoToUserConverter;
+    }
+
+    @Override
+    public Collection<UserDto> findAll() {
+        return userRepository.findAll().stream()
+                .map(user -> userToUserDtoConverter.convert(user))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -39,15 +50,22 @@ public class CommonUserService implements UserService {
         }
 
         User userToSave = userDtoToUserConverter.convert(userDto);
+        userToSave.setCreationDate(ZonedDateTime.now());
         userToSave = userRepository.save(userToSave);
         return userToUserDtoConverter.convert(userToSave);
     }
 
     @Override
     public UserDto update(UserDto userDto) {
-        User userToSave = userDtoToUserConverter.convert(userDto);
-        userToSave = userRepository.save(userToSave);
-        return userToUserDtoConverter.convert(userToSave);
+        if (!userRepository.existsByLogin(userDto.getLogin())) {
+            throw new UserNotFoundException(userDto.getId());
+        }
+
+        User userToUpdate = userRepository.findById(userDto.getId()).get();
+        userToUpdate.setLogin(userDto.getLogin());
+        userToUpdate.setPassword(userDto.getPassword());
+        User savedUser = userRepository.save(userToUpdate);
+        return userToUserDtoConverter.convert(savedUser);
     }
 
     @Override

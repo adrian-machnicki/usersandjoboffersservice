@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import static com.machnickiadrian.usersandjoboffersservice.GenerateUtils.getCreationTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -87,10 +85,5 @@ public class CommonUserServiceTest {
                 .hasFieldOrPropertyWithValue("userId", userId);
     }
 
-    private ZonedDateTime getCreationTime() {
-        LocalDate creationDate = LocalDate.of(2018, 12, 26);
-        LocalTime creationTime = LocalTime.of(12, 0);
-        ZoneId zone = ZoneId.of("Europe/Warsaw");
-        return ZonedDateTime.of(creationDate, creationTime, zone);
-    }
+
 }
