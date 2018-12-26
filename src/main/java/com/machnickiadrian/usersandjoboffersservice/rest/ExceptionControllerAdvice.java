@@ -1,4 +1,4 @@
-package com.machnickiadrian.usersandjoboffersservice.user;
+package com.machnickiadrian.usersandjoboffersservice.rest;
 
 import com.machnickiadrian.usersandjoboffersservice.user.exception.UserLoginNotUniqueException;
 import com.machnickiadrian.usersandjoboffersservice.user.exception.UserNotFoundException;
@@ -16,23 +16,13 @@ public class ExceptionControllerAdvice {
         return new ResponseEntity<>(new ErrorInfo(e), HttpStatus.NOT_FOUND);
     }
 
-    static class ErrorInfo {
+    private static class ErrorInfo {
         @Getter
         private final String message;
 
-        public ErrorInfo(RuntimeException e) {
+        private ErrorInfo(RuntimeException e) {
             this.message = e.getMessage();
         }
-    }
-
-    static class ValidationErrorInfo {
-        @Getter
-        private final String message;
-
-        public ValidationErrorInfo(String message) {
-            this.message = message;
-        }
-
     }
 
 }

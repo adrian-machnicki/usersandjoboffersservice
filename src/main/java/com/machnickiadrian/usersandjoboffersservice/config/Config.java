@@ -1,4 +1,4 @@
-package com.machnickiadrian.usersandjoboffersservice;
+package com.machnickiadrian.usersandjoboffersservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -4,32 +4,28 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Getter
 @Setter
 @ToString
-@Entity
-@Table(name = "job_offers")
-public class JobOffer {
+public class JobOfferDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String title;
 
-    @Column(name = "company_name")
+    @NotBlank
     private String companyName;
 
-    @Column(name = "user_name")
+    @NotBlank
     private String userName;
 
-    @Enumerated(value = EnumType.STRING)
+    @NotNull
     private JobOfferCategory category;
-
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
-
 }

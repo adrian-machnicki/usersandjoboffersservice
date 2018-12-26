@@ -1,5 +1,6 @@
 package com.machnickiadrian.usersandjoboffersservice.user;
 
+import com.machnickiadrian.usersandjoboffersservice.rest.ValidationErrorInfo;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,15 +36,13 @@ public class UserRestController {
     @GetMapping("/{id}")
     ResponseEntity<?> findUser(@PathVariable Long id) {
         UserDto user = userService.findById(id);
-        return new ResponseEntity<UserDto>(user, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping
     ResponseEntity<?> createUser(@RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            ExceptionControllerAdvice.ValidationErrorInfo errorInfo =
-                    new ExceptionControllerAdvice.ValidationErrorInfo(bindingResult.getAllErrors().toString());
-            return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ValidationErrorInfo.ofErrors(bindingResult), HttpStatus.BAD_REQUEST);
         }
 
         UserDto savedUser = userService.create(userDto);
@@ -53,9 +52,7 @@ public class UserRestController {
     @PutMapping("/{id}")
     ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            ExceptionControllerAdvice.ValidationErrorInfo errorInfo =
-                    new ExceptionControllerAdvice.ValidationErrorInfo(bindingResult.getAllErrors().toString());
-            return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ValidationErrorInfo.ofErrors(bindingResult), HttpStatus.BAD_REQUEST);
         }
 
         UserDto updatedUser = userService.update(userDto);
