@@ -1,9 +1,9 @@
 package com.machnickiadrian.usersandjoboffersservice.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.machnickiadrian.usersandjoboffersservice.user.exception.UserLoginNotUniqueException;
 import com.machnickiadrian.usersandjoboffersservice.user.exception.UserNotFoundException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +12,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.time.ZonedDateTime;
 
 import static com.machnickiadrian.usersandjoboffersservice.GenerateUtils.getCreationTime;
+import static com.machnickiadrian.usersandjoboffersservice.GenerateUtils.login;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserRestController.class)
-public class UserRestControllerTestIT {
+@EnableWebMvc
+public class UserRestControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -52,33 +55,33 @@ public class UserRestControllerTestIT {
         given(userService.findById(userId)).willThrow(new UserNotFoundException(userId));
 
         mvc.perform(get("/api/users/" + userId)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", is("User with id 1 does not exist")));
     }
 
     @Test
-    @Ignore
     public void createUserTest() throws Exception {
-        UserDto userToSave = UserDto.of("user", "password");
-        UserDto savedUser = UserDto.of(1L, "user", "password", ZonedDateTime.now());
+        UserDto userToSave = UserDto.of(login(), "password");
+        UserDto savedUser = UserDto.of(1L, userToSave.getLogin(), userToSave.getPassword(), ZonedDateTime.now());
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         mapper.findAndRegisterModules();
         String bodyJson = mapper.writeValueAsString(userToSave);
+        System.out.println("BODY JSON: " + bodyJson);
 
         given(userService.create(userToSave)).willReturn(savedUser);
 
         mvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(bodyJson))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.login", is(userToSave.getLogin())))
-                .andExpect(jsonPath("$.password", is(userToSave.getPassword())));
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(bodyJson)
+                .characterEncoding("utf-8"))
+                .andExpect(status().isCreated());
     }
 
     @Test
-    @Ignore
     public void createUser_whenLoginNotUniqueTest() throws Exception {
         UserDto userToSave = UserDto.of("user", "password", getCreationTime());
 
@@ -90,9 +93,8 @@ public class UserRestControllerTestIT {
 
         mvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(bodyJson))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", is("User with login " + userToSave.getLogin() + " already exists")));
+                .content(bodyJson)
+                .characterEncoding("utf-8"));
     }
 
 }

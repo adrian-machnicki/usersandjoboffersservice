@@ -1,9 +1,8 @@
 package com.machnickiadrian.usersandjoboffersservice.joboffer;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -11,6 +10,9 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class JobOfferDto {
 
     private Long id;
@@ -26,6 +28,12 @@ public class JobOfferDto {
 
     @NotNull
     private JobOfferCategory category;
+
+    @NotNull
+    @FutureOrPresent
     private ZonedDateTime startDate;
+
+    @NotNull
+    @FutureOrPresent
     private ZonedDateTime endDate;
 }

@@ -1,7 +1,9 @@
 package com.machnickiadrian.usersandjoboffersservice.joboffer;
 
+import com.machnickiadrian.usersandjoboffersservice.joboffer.exception.UserDoesNotExistException;
 import com.machnickiadrian.usersandjoboffersservice.joboffer.mapper.JobOfferDtoToJobOfferConverter;
 import com.machnickiadrian.usersandjoboffersservice.joboffer.mapper.JobOfferToJobOfferDtoConverter;
+import com.machnickiadrian.usersandjoboffersservice.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +15,16 @@ import static java.util.stream.Collectors.toList;
 public class CommonJobOfferService implements JobOfferService {
 
     private JobOfferRepository jobOfferRepository;
+    private UserService userService;
     private JobOfferToJobOfferDtoConverter jobOfferToJobOfferDtoConverter;
     private JobOfferDtoToJobOfferConverter jobOfferDtoToJobOfferConverter;
 
     @Autowired
-    public CommonJobOfferService(JobOfferRepository jobOfferRepository, JobOfferToJobOfferDtoConverter jobOfferToJobOfferDtoConverter, JobOfferDtoToJobOfferConverter jobOfferDtoToJobOfferConverter) {
+    public CommonJobOfferService(JobOfferRepository jobOfferRepository, UserService userService,
+                                 JobOfferToJobOfferDtoConverter jobOfferToJobOfferDtoConverter,
+                                 JobOfferDtoToJobOfferConverter jobOfferDtoToJobOfferConverter) {
         this.jobOfferRepository = jobOfferRepository;
+        this.userService = userService;
         this.jobOfferToJobOfferDtoConverter = jobOfferToJobOfferDtoConverter;
         this.jobOfferDtoToJobOfferConverter = jobOfferDtoToJobOfferConverter;
     }
@@ -53,6 +59,10 @@ public class CommonJobOfferService implements JobOfferService {
 
     @Override
     public JobOfferDto create(JobOfferDto jobOfferDto) {
+        if (!userService.existsByLogin(jobOfferDto.getUserName())) {
+            throw new UserDoesNotExistException(jobOfferDto.getUserName());
+        }
+
         JobOffer offer = jobOfferDtoToJobOfferConverter.convert(jobOfferDto);
         JobOffer savedOffer = jobOfferRepository.save(offer);
         return jobOfferToJobOfferDtoConverter.convert(savedOffer);

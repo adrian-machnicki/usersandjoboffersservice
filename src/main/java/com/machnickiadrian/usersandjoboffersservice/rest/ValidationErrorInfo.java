@@ -2,6 +2,7 @@ package com.machnickiadrian.usersandjoboffersservice.rest;
 
 import lombok.Getter;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
 import java.util.Collection;
 
@@ -22,7 +23,7 @@ public class ValidationErrorInfo {
 
     public static Collection<ValidationErrorInfo> ofErrors(Errors errors) {
         return errors.getAllErrors().stream()
-                .map(err -> new ValidationErrorInfo(err.getObjectName(), err.getDefaultMessage()))
+                .map(err -> new ValidationErrorInfo(((FieldError) err).getField(), err.getDefaultMessage()))
                 .collect(toList());
     }
 

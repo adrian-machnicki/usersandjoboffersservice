@@ -21,6 +21,7 @@ public class JobOfferToJobOfferDtoConverter implements Converter<JobOffer, JobOf
         offerDto.setTitle(source.getTitle());
         offerDto.setCompanyName(source.getCompanyName());
         offerDto.setUserName(source.getUserName());
+        offerDto.setCategory(source.getCategory());
         offerDto.setStartDate(source.getStartDate());
         offerDto.setEndDate(source.getEndDate());
         return offerDto;

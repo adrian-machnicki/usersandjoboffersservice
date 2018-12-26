@@ -14,4 +14,8 @@ public class GenerateUtils {
         return ZonedDateTime.of(creationDate, creationTime, zone);
     }
 
+    public static String login() {
+        return "user" + Math.random() * 100000;
+    }
+
 }

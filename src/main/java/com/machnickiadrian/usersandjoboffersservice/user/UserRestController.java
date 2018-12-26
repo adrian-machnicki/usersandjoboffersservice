@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Log
@@ -40,7 +41,7 @@ public class UserRestController {
     }
 
     @PostMapping
-    ResponseEntity<?> createUser(@RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
+    ResponseEntity<?> createUser(@RequestBody @NotNull @Valid UserDto userDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(ValidationErrorInfo.ofErrors(bindingResult), HttpStatus.BAD_REQUEST);
         }
@@ -55,7 +56,7 @@ public class UserRestController {
             return new ResponseEntity<>(ValidationErrorInfo.ofErrors(bindingResult), HttpStatus.BAD_REQUEST);
         }
 
-        UserDto updatedUser = userService.update(userDto);
+        UserDto updatedUser = userService.update(id, userDto);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 

@@ -56,13 +56,12 @@ public class CommonUserService implements UserService {
     }
 
     @Override
-    public UserDto update(UserDto userDto) {
-        if (!userRepository.existsByLogin(userDto.getLogin())) {
-            throw new UserNotFoundException(userDto.getId());
+    public UserDto update(Long id, UserDto userDto) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException(id);
         }
 
-        User userToUpdate = userRepository.findById(userDto.getId()).get();
-        userToUpdate.setLogin(userDto.getLogin());
+        User userToUpdate = userRepository.findById(id).get();
         userToUpdate.setPassword(userDto.getPassword());
         User savedUser = userRepository.save(userToUpdate);
         return userToUserDtoConverter.convert(savedUser);
@@ -76,5 +75,10 @@ public class CommonUserService implements UserService {
 
         userRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public boolean existsByLogin(String login) {
+        return userRepository.existsByLogin(login);
     }
 }

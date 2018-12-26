@@ -1,5 +1,6 @@
 package com.machnickiadrian.usersandjoboffersservice.joboffer;
 
+import com.machnickiadrian.usersandjoboffersservice.joboffer.exception.JobOfferCategoryDoesNotExistException;
 import com.machnickiadrian.usersandjoboffersservice.rest.ValidationErrorInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,15 @@ public class JobOfferRestController {
             foundOffers = jobOfferService.findAll();
         }
 
-        JobOfferCategory offerCategory = JobOfferCategory.valueOf(category.toUpperCase());
+        JobOfferCategory offerCategory = null;
+        if (!category.equals("")) {
+            try {
+                offerCategory = JobOfferCategory.valueOf(category.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new JobOfferCategoryDoesNotExistException(category);
+
+            }
+        }
 
         if (!category.equals("") && !username.equals("")) {
             foundOffers = jobOfferService.findAllByUserNameAndCategory(username, offerCategory);
