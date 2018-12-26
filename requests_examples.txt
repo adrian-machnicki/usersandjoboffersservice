@@ -1,0 +1,35 @@
+// get all users
+GET /api/users
+
+// create user
+POST /api/users
+{
+	"login" : "login",
+	"password" : "password"
+}
+
+// update user
+PUT /api/users/{id}
+{
+	"login" : "login",
+	"password" : "password"
+}
+
+// delete user
+DELETE /api/users/{id}
+
+
+// get all job offers
+GET /api/offers
+possible params: username, category
+
+// add job offer
+POST /api/offers
+{
+    "title": "title",
+    "companyName": "company",
+    "userName": "username",
+    "category": "FOOD_AND_DRINKS",
+    "startDate": "2018-12-26T22:13:21+01:00",
+    "endDate": "2018-12-26T22:13:21+01:00"
+}
